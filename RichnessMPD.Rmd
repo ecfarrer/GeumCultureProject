@@ -31,6 +31,107 @@ options(contrasts=c("contr.helmert","contr.poly"))
 
 ```
 
+# Emily
+
+```{r}
+
+load("dat7.Rda")
+dat6<-dat7
+
+# dfsummary <- mangrove %>%
+#   group_by(Substrate, Inoculum) %>%
+#   summarise(
+#     se = std.error(FineRootLengthm),
+#     FineRootLengthm = mean(FineRootLengthm,na.rm=T))
+
+dat6$Site2<-factor(recode_values(dat6$Site,"P"~"Low elevation","Q"~"High elevation"),levels=c("Low elevation","High elevation"))
+dat6$Community.x<-factor(dat6$Community.x,levels=c("SB", "MM", "DM", "FF"))
+
+#Richness
+
+richnessmean<-dat6%>%
+  group_by(Community.x,Site2)%>%
+  summarise(se=std.error(SR),SR=mean(SR),count=n())
+
+#no facet wrap
+# rm5<-ggplot(dat6, aes(x=Site2, y=SR,color=Community.x)) +
+#   labs(x = "Site",y="Richness") +
+#   theme_classic()+
+#   theme(line=element_line(size=.3),text=element_text(size=10),legend.position = "none")+
+#   geom_point(data=richnessmean,size=1.8,aes(color=Community.x,group=Community.x),position = position_dodge(0.8))+
+#   geom_point(size=.7,aes(fill=Community.x,group=Community.x),position = position_jitterdodge(jitter.width=.2),alpha=rep(.4,44))+
+#   geom_errorbar(aes(ymin = SR-se, ymax = SR+se), data = richnessmean, width = 0.4, position = position_dodge(0.8))+
+#   scale_color_manual(values = c("#8960b3", "#56ae6c","#ba495b","#b0923b")) 
+#   #annotate("text",x = c(1,2,3), y = 35, label = c("a","ab","b"),size=3)
+
+#with facet wrap - use this if we want the SB/MM/DM/FF labels
+richfig<-ggplot(dat6, aes(x=Community.x, y=SR,color=Community.x)) +
+  labs(x = "",y="Richness") +
+  theme_classic()+
+  theme(line=element_line(size=.3),text=element_text(size=10),legend.position = "none",strip.text = element_text(size=10),strip.placement = "outside", strip.background = element_blank())+
+  geom_point(data=richnessmean,size=1.8)+
+  geom_point(size=.7,aes(fill=Community.x,group=Community.x),position = position_jitterdodge(jitter.width=.2),alpha=rep(.4,44))+
+  geom_errorbar(aes(ymin = SR-se, ymax = SR+se), data = richnessmean, width = 0.4, position = position_dodge(0.8))+
+  scale_color_manual(values = c("#8960b3", "#56ae6c","#ba495b","#b0923b"))+  
+  facet_wrap(vars(Site2),strip.position = "bottom")
+
+#Evenness
+div<-dat6%>%
+  dplyr::select(Community.x,Site2,OTU0:OTU9)
+
+#XXXX make sure new dataframe is 33, the old one is 36
+# calculate evenness index using vegan package Pielou's measure of species evenness
+data_evenness <- diversity(div[,3:33]) / log(specnumber(div[,3:33]))
+
+data_alphadiv <- cbind(div[,1:2], t(data_richness), data_shannon, data_evenness)
+colnames(data_alphadiv)[1] <- "Community"
+data_alphadiv = data_alphadiv %>% 
+  unite(Community_Site, c(,1:2), sep = "_", remove = FALSE)
+
+even<-data_alphadiv%>%
+  group_by(Community,Site)#%>%
+  #summarise(data_evenness)
+
+levels(even$Site) <- c("Soddie", "Saddle")
+
+#MPD
+mpdmean<-dat6%>%
+  group_by(Community.x, Site2)%>%
+  filter(is.na(mpd.obs.z.weighted)==F)%>%
+  summarise(se=std.error(mpd.obs.z.weighted),mpd.obs.z.weighted=mean(mpd.obs.z.weighted,na.rm=T),n=n())
+
+mpdfig<-ggplot(dat6, aes(x=Community.x, y=mpd.obs.z.weighted, color=Community.x)) +
+  labs(x = "",y="MPD") +
+  theme_classic()+
+  theme(line=element_line(size=.3),text=element_text(size=10),legend.position = "none",strip.text = element_text(size=10),strip.placement = "outside", strip.background = element_blank())+
+  geom_point(data=mpdmean,size=1.8)+
+  geom_point(size=.7,aes(fill=Community.x,group=Community.x),position = position_jitterdodge(jitter.width=.2),alpha=rep(.4,44))+
+  geom_errorbar(aes(ymin = mpd.obs.z.weighted-se, ymax = mpd.obs.z.weighted+se), data = mpdmean, width = 0.4, position = position_dodge(0.8))+
+  scale_color_manual(values = c("#8960b3", "#56ae6c","#ba495b","#b0923b"))+  
+  facet_wrap(vars(Site2),strip.position = "bottom")
+
+
+mntdmean<-dat6%>%
+  group_by(Community.x, Site2)%>%
+  filter(is.na(mntd.obs.z.weighted)==F)%>%
+  summarise(se=std.error(mntd.obs.z.weighted),mntd.obs.z.weighted=mean(mntd.obs.z.weighted,na.rm=T),n=n())
+
+mntdfig<-ggplot(dat6, aes(x=Community.x, y=mntd.obs.z.weighted, color=Community.x)) +
+  labs(x = "",y="MNTD") +
+  theme_classic()+
+  theme(line=element_line(size=.3),text=element_text(size=10),legend.position = "none",strip.text = element_text(size=10),strip.placement = "outside", strip.background = element_blank())+
+  geom_point(data=mntdmean,size=1.8)+
+  geom_point(size=.7,aes(fill=Community.x,group=Community.x),position = position_jitterdodge(jitter.width=.2),alpha=rep(.4,44))+
+  geom_errorbar(aes(ymin = mntd.obs.z.weighted-se, ymax = mntd.obs.z.weighted+se), data = mntdmean, width = 0.4, position = position_dodge(0.8))+
+  scale_color_manual(values = c("#8960b3", "#56ae6c","#ba495b","#b0923b"))+  
+  facet_wrap(vars(Site2),strip.position = "bottom")
+
+
+pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot/GeumCultureProject/richevdivmpdmntd.pdf",width=7.2,height=7.2)
+plot_grid(richfig,mpdfig,mntdfig,mpdfig,mntdfig, nrow = 2,labels=c("a) Richness","b) Evenness","c) Shannon Diversity","d) MPD","e) MNTD"),label_size=10,hjust=-.17,vjust=1.2,scale=1,label_fontface = "plain")
+dev.off()
+```
+
 # Calculating richness by plant community
 
 ```{r}
