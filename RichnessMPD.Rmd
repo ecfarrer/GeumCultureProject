@@ -134,6 +134,14 @@ mpdmean<-dat6%>%
   filter(is.na(mpd.obs.z.weighted)==F)%>%
   summarise(se=std.error(mpd.obs.z.weighted),mpd.obs.z.weighted=mean(mpd.obs.z.weighted,na.rm=T),n=n())
 
+annotation_mpd <- data.frame(
+  Community.x = c(.94,2.94,2.93,3.94),                       # X-coordinate
+  mpd.obs.z.weighted = c(-2,-2,-2,-2),                 # Y-coordinate
+  Site2 = c("Low elevation","Low elevation","High elevation","High elevation"),                      # Factor level for the first panel
+  label = c("\u2020","*","*","\u2020")  # Unicode for dagger
+)
+annotation_mpd$Site2<-factor(annotation_mpd$Site2,levels=c("Low elevation","High elevation"))
+
 mpdfig<-ggplot(dat6, aes(x=Community.x, y=mpd.obs.z.weighted, color=Community.x)) +
   labs(x = "",y="MPD") +
   theme_classic()+
@@ -142,13 +150,26 @@ mpdfig<-ggplot(dat6, aes(x=Community.x, y=mpd.obs.z.weighted, color=Community.x)
   geom_point(size=.7,aes(fill=Community.x,group=Community.x),position = position_jitterdodge(jitter.width=.2),alpha=rep(.4,44))+
   geom_errorbar(aes(ymin = mpd.obs.z.weighted-se, ymax = mpd.obs.z.weighted+se), data = mpdmean, width = 0.4, position = position_dodge(0.8))+
   scale_color_manual(values = c("#8960b3", "#56ae6c","#ba495b","#b0923b"))+  
-  facet_wrap(vars(Site2),strip.position = "bottom")
+  geom_hline(yintercept = 0, linetype = "dashed", color = "gray50", linewidth = .7)+
+  facet_wrap(vars(Site2),strip.position = "bottom")+
+  geom_text(data = annotation_mpd, aes(label = label), color ="black",size = 7,hjust = 0 )
+mpdfig
 
+
+#MNTD
 
 mntdmean<-dat6%>%
   group_by(Community.x, Site2)%>%
   filter(is.na(mntd.obs.z.weighted)==F)%>%
   summarise(se=std.error(mntd.obs.z.weighted),mntd.obs.z.weighted=mean(mntd.obs.z.weighted,na.rm=T),n=n())
+
+annotation_mntd <- data.frame(
+  Community.x = c(.94,2.94,2.94,3.94),                       # X-coordinate
+  mntd.obs.z.weighted = c(-1.75,-1.75,-1.75,-1.75),                 # Y-coordinate
+  Site2 = c("Low elevation","Low elevation","High elevation","High elevation"),                      # Factor level for the first panel
+  label = c("*","*","*","\u2020")  # Unicode for dagger
+)
+annotation_mntd$Site2<-factor(annotation_mntd$Site2,levels=c("Low elevation","High elevation"))
 
 mntdfig<-ggplot(dat6, aes(x=Community.x, y=mntd.obs.z.weighted, color=Community.x)) +
   labs(x = "",y="MNTD") +
@@ -158,14 +179,17 @@ mntdfig<-ggplot(dat6, aes(x=Community.x, y=mntd.obs.z.weighted, color=Community.
   geom_point(size=.7,aes(fill=Community.x,group=Community.x),position = position_jitterdodge(jitter.width=.2),alpha=rep(.4,44))+
   geom_errorbar(aes(ymin = mntd.obs.z.weighted-se, ymax = mntd.obs.z.weighted+se), data = mntdmean, width = 0.4, position = position_dodge(0.8))+
   scale_color_manual(values = c("#8960b3", "#56ae6c","#ba495b","#b0923b"))+  
-  facet_wrap(vars(Site2),strip.position = "bottom")
+  geom_hline(yintercept = 0, linetype = "dashed", color = "gray50", linewidth = .7)+
+  facet_wrap(vars(Site2),strip.position = "bottom")+
+    geom_text(data = annotation_mntd, aes(label = label), color ="black",size = 7,hjust = 0)
+mntdfig
 
 
-pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot/GeumCultureProject/richevdivmpdmntd.pdf",width=7.2,height=7.2)
+#pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot/GeumCultureProject/richevdivmpdmntd.pdf",width=7.2,height=7.2)
 my_grid<-plot_grid(richfig,evenfig,divfig,mpdfig,mntdfig, nrow = 2,labels=c("a) Richness","b) Evenness","c) Shannon Diversity","d) MPD","e) MNTD"),label_size=10,hjust=-.17,vjust=0,scale=1,label_fontface = "plain")
 ggdraw() + 
   draw_plot(my_grid, x = 0, y = 0, width = 1, height = 0.95) # Leaves 5% spacing at the top
-dev.off()
+#dev.off()
 ```
 
 # Calculating richness by plant community
