@@ -135,8 +135,8 @@ mpdmean<-dat6%>%
   summarise(se=std.error(mpd.obs.z.weighted),mpd.obs.z.weighted=mean(mpd.obs.z.weighted,na.rm=T),n=n())
 
 annotation_mpd <- data.frame(
-  Community.x = c(.93,2.93,2.93,3.93),                       # X-coordinate
-  mpd.obs.z.weighted = c(-2,-2,-2,-2),                 # Y-coordinate
+  Community.x = c(.91,2.91,2.91,3.91),                       # X-coordinate
+  mpd.obs.z.weighted = c(-2.1,-2.1,-2.1,-2.1),                 # Y-coordinate
   Site2 = c("Low elevation","Low elevation","High elevation","High elevation"),                      # Factor level for the first panel
   label = c("\u2020","*","*","\u2020")  # Unicode for dagger
 )
@@ -164,8 +164,8 @@ mntdmean<-dat6%>%
   summarise(se=std.error(mntd.obs.z.weighted),mntd.obs.z.weighted=mean(mntd.obs.z.weighted,na.rm=T),n=n())
 
 annotation_mntd <- data.frame(
-  Community.x = c(.93,2.93,2.93,3.93),                       # X-coordinate
-  mntd.obs.z.weighted = c(-1.75,-1.75,-1.75,-1.75),                 # Y-coordinate
+  Community.x = c(.91,2.91,2.91,3.91),                       # X-coordinate
+  mntd.obs.z.weighted = c(-1.8,-1.8,-1.8,-1.8),                 # Y-coordinate
   Site2 = c("Low elevation","Low elevation","High elevation","High elevation"),                      # Factor level for the first panel
   label = c("*","*","*","\u2020")  # Unicode for dagger
 )
