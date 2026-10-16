@@ -135,7 +135,7 @@ mpdmean<-dat6%>%
   summarise(se=std.error(mpd.obs.z.weighted),mpd.obs.z.weighted=mean(mpd.obs.z.weighted,na.rm=T),n=n())
 
 annotation_mpd <- data.frame(
-  Community.x = c(.94,2.94,2.93,3.94),                       # X-coordinate
+  Community.x = c(.93,2.93,2.93,3.93),                       # X-coordinate
   mpd.obs.z.weighted = c(-2,-2,-2,-2),                 # Y-coordinate
   Site2 = c("Low elevation","Low elevation","High elevation","High elevation"),                      # Factor level for the first panel
   label = c("\u2020","*","*","\u2020")  # Unicode for dagger
@@ -152,7 +152,7 @@ mpdfig<-ggplot(dat6, aes(x=Community.x, y=mpd.obs.z.weighted, color=Community.x)
   scale_color_manual(values = c("#8960b3", "#56ae6c","#ba495b","#b0923b"))+  
   geom_hline(yintercept = 0, linetype = "dashed", color = "gray50", linewidth = .7)+
   facet_wrap(vars(Site2),strip.position = "bottom")+
-  geom_text(data = annotation_mpd, aes(label = label), color ="black",size = 7,hjust = 0 )
+  geom_text(data = annotation_mpd, aes(label = label), color ="black",size = 5,hjust = 0 )
 mpdfig
 
 
@@ -164,7 +164,7 @@ mntdmean<-dat6%>%
   summarise(se=std.error(mntd.obs.z.weighted),mntd.obs.z.weighted=mean(mntd.obs.z.weighted,na.rm=T),n=n())
 
 annotation_mntd <- data.frame(
-  Community.x = c(.94,2.94,2.94,3.94),                       # X-coordinate
+  Community.x = c(.93,2.93,2.93,3.93),                       # X-coordinate
   mntd.obs.z.weighted = c(-1.75,-1.75,-1.75,-1.75),                 # Y-coordinate
   Site2 = c("Low elevation","Low elevation","High elevation","High elevation"),                      # Factor level for the first panel
   label = c("*","*","*","\u2020")  # Unicode for dagger
@@ -181,15 +181,15 @@ mntdfig<-ggplot(dat6, aes(x=Community.x, y=mntd.obs.z.weighted, color=Community.
   scale_color_manual(values = c("#8960b3", "#56ae6c","#ba495b","#b0923b"))+  
   geom_hline(yintercept = 0, linetype = "dashed", color = "gray50", linewidth = .7)+
   facet_wrap(vars(Site2),strip.position = "bottom")+
-    geom_text(data = annotation_mntd, aes(label = label), color ="black",size = 7,hjust = 0)
+    geom_text(data = annotation_mntd, aes(label = label), color ="black",size = 5,hjust = 0)
 mntdfig
 
 
-#pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot/GeumCultureProject/richevdivmpdmntd.pdf",width=7.2,height=7.2)
+cairo_pdf("/Users/farrer/Dropbox/EmilyComputerBackup/Documents/Niwot/NiwotGeumCulturing/Stats/GeumCultureProject/richevdivmpdmntd.pdf",width=7.2,height=5.2)
 my_grid<-plot_grid(richfig,evenfig,divfig,mpdfig,mntdfig, nrow = 2,labels=c("a) Richness","b) Evenness","c) Shannon Diversity","d) MPD","e) MNTD"),label_size=10,hjust=-.17,vjust=0,scale=1,label_fontface = "plain")
 ggdraw() + 
   draw_plot(my_grid, x = 0, y = 0, width = 1, height = 0.95) # Leaves 5% spacing at the top
-#dev.off()
+dev.off()
 ```
 
 # Calculating richness by plant community
